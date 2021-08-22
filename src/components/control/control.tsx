@@ -25,7 +25,12 @@ export function Control({
     await firestore
       .collection('computers')
       .doc(macAddress)
-      .set({ ...res.data(), status, message, lastAction: new Date().toLocaleString().replace(/\//g, '.') });
+      .set({
+        ...res.data(),
+        status,
+        message,
+        lastAction: new Date().toLocaleString().replace(/\//g, '.'),
+      });
   }
 
   return (
@@ -41,7 +46,10 @@ export function Control({
           setText(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') setValues(true, text);
+          if (e.key === 'Enter') {
+            setValues(true, text);
+            setText('');
+          }
         }}
         className={classes.input}
         label="Message"
@@ -66,6 +74,7 @@ export function Control({
         <Button
           onClick={() => {
             setValues(true, text);
+            setText('');
           }}
           className={classes.button}
           variant="outlined"
