@@ -40,6 +40,9 @@ export function Control({
         onChange={(e) => {
           setText(e.target.value);
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') setValues(true, text);
+        }}
         className={classes.input}
         label="Message"
         variant="outlined"
