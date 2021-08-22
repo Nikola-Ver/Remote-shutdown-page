@@ -1,0 +1,46 @@
+.box {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 15px;
+  border-bottom: 1px solid var(--default);
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  cursor: pointer;
+  transition: 0.5s border-left, 0.5s border-right;
+
+  &:hover,
+  &:active {
+    border-left: 1px solid var(--active);
+    border-right: 1px solid var(--active);
+
+    .text-info {
+      color: var(--active);
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .text-header {
+    color: var(--default);
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .text-info {
+    color: var(--white);
+    transition: 0.2s;
+  }
+
+  @media screen and (max-width: 600px) {
+    width: 88%;
+
+    .text-header,
+    .text-info {
+      font-size: 12pt;
+    }
+  }
+}

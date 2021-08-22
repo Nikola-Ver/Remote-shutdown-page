@@ -1,0 +1,73 @@
+@keyframes appearance {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes component-appearance {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.background {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: var(--background-popup);
+  animation: appearance 0.2s ease-in;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.input {
+  width: 450px;
+  animation: component-appearance 0.5s ease-in;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  width: 450px;
+  height: 55px;
+  margin-top: 10px;
+  justify-content: space-between;
+  animation: component-appearance 0.3s ease-in;
+
+  .button {
+    text-transform: none;
+    width: 49%;
+  }
+}
+
+.shutdown-icon {
+  margin-top: -1px;
+  margin-right: 10px;
+}
+
+.send-icon {
+  margin-top: -1px;
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .input {
+    font-size: 12pt;
+    width: 90vw;
+  }
+
+  .buttons {
+    font-size: 12pt;
+    width: 90vw;
+  }
+}
