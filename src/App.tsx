@@ -1,9 +1,10 @@
 import './styles/variables.scss';
+import './img/sad-smile.svg';
 import classes from './App.module.scss';
 import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { VpnKey as KeyIcon } from '@material-ui/icons';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { Login } from './components/login';
 import { Computer } from './components/computer';
 import { Control } from './components/control';
@@ -114,7 +115,7 @@ function App() {
           <Control macAddress={macAddress} setMacAddress={setMacAddress} />
         )}
         <div className={classes.box}>
-          {computers?.map((e: any) => (
+          {computers?.map((e: any, index: number) => (
             <Computer
               name={e.name}
               macAddress={e.macAddress}
@@ -123,8 +124,15 @@ function App() {
               status={e.status}
               lastAction={e.lastAction}
               setMacAddress={setMacAddress}
+              key={index}
             />
           ))}
+          {computers && !computers.length && (
+            <div className={classes['empty-box']}>
+              <div className={classes['sad-smile']}></div>
+              <Typography className={classes.header} variant="h1">No computers connected yet</Typography>
+            </div>
+          )}
         </div>
       </ThemeProvider>
     </Firestore.Provider>

@@ -24,6 +24,28 @@
   }
 }
 
+.empty-box {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+  justify-content: center;
+  align-items: center;
+
+  .sad-smile {
+    background: url('./img/sad-smile.svg') no-repeat;
+    background-size: 100%;
+    width: 160pt;
+    height: 160pt;
+    margin-bottom: 50pt;
+  }
+
+  .header {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--empty-box-text);
+  }
+}
+
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
