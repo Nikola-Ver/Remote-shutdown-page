@@ -42,6 +42,7 @@ export function Control({
       }}
     >
       <TextField
+        value={text}
         onChange={(e) => {
           setText(e.target.value);
         }}
