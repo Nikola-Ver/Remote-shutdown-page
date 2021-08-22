@@ -22,15 +22,26 @@ export function Control({
     console.log(status, message);
 
     const res = await firestore.collection('computers').doc(macAddress).get();
-    await firestore
-      .collection('computers')
-      .doc(macAddress)
-      .set({
-        ...res.data(),
-        status,
-        message,
-        lastAction: new Date().toLocaleString().replace(/\//g, '.'),
-      });
+    if (status) {
+      await firestore
+        .collection('computers')
+        .doc(macAddress)
+        .set({
+          ...res.data(),
+          status,
+          message,
+        });
+    } else {
+      await firestore
+        .collection('computers')
+        .doc(macAddress)
+        .set({
+          ...res.data(),
+          status,
+          message,
+          lastAction: new Date().toLocaleString().replace(/\//g, '.'),
+        });
+    }
   }
 
   return (
