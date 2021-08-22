@@ -3,7 +3,7 @@ import {
   Computer as NameIcon,
   InsertLink as MacIcon,
   Wifi as IpIcon,
-  LocalHotel as RegionIcon,
+  AccountBox as UserNameIcon,
   PowerSettingsNew as StatusIcon,
   AlarmOn as OnIcon,
   AlarmOff as OffIcon,
@@ -15,7 +15,7 @@ export function Computer({
   name,
   macAddress,
   localIp,
-  region,
+  userName,
   status,
   lastAction,
   setMacAddress,
@@ -23,7 +23,7 @@ export function Computer({
   name: string;
   macAddress: string;
   localIp: string;
-  region: string;
+  userName: string;
   status: boolean;
   lastAction: string;
   setMacAddress: Dispatch<SetStateAction<string>>;
@@ -64,12 +64,12 @@ export function Computer({
         </Typography>
       </div>
       <div className={classes.info}>
-        <RegionIcon color={status ? 'primary' : 'secondary'} />
+        <UserNameIcon color={status ? 'primary' : 'secondary'} />
         <Typography className={classes['text-header']} variant="h3">
-          Region:
+          User name:
         </Typography>
         <Typography className={classes['text-info']} variant="h3">
-          {region}
+          {userName}
         </Typography>
       </div>
       <div className={classes.info}>

@@ -75,7 +75,7 @@ function App() {
     unsubscribe = firestore.collection('computers').onSnapshot((doc) => {
       setComputers(
         doc.docs.map((e) => {
-          const { lastAction, localIp, message, name, region, status } =
+          const { lastAction, localIp, message, name, userName, status } =
             e.data();
           return {
             macAddress: e.id,
@@ -83,7 +83,7 @@ function App() {
             localIp,
             message,
             name,
-            region,
+            userName,
             status,
           };
         })
@@ -119,7 +119,7 @@ function App() {
               name={e.name}
               macAddress={e.macAddress}
               localIp={e.localIp}
-              region={e.region}
+              userName={e.userName}
               status={e.status}
               lastAction={e.lastAction}
               setMacAddress={setMacAddress}
