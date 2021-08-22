@@ -25,7 +25,7 @@ export function Control({
     await firestore
       .collection('computers')
       .doc(macAddress)
-      .set({ ...res.data(), status, message });
+      .set({ ...res.data(), status, message, lastAction: new Date().toLocaleString().replace(/\//g, '.') });
   }
 
   return (
