@@ -10,29 +10,36 @@ import { Firestore } from '../../firestore';
 export function Control({
   macAddress,
   setMacAddress,
+  toast,
 }: {
   macAddress: string;
   setMacAddress: Dispatch<SetStateAction<string>>;
+  toast: any;
 }) {
   const firestore = useContext(Firestore);
   const background = useRef(null);
   const [text, setText] = useState('');
 
   async function setValues(status: boolean, message: string) {
-    console.log(status, message);
-
     const res = await firestore.collection('computers').doc(macAddress).get();
+
     if (status) {
-      await firestore
+      firestore
         .collection('computers')
         .doc(macAddress)
         .set({
           ...res.data(),
           status,
           message,
+        })
+        .then(() => {
+          toast.success('Message delivered');
+        })
+        .catch(() => {
+          toast.error('Error, message not delivered');
         });
     } else {
-      await firestore
+      firestore
         .collection('computers')
         .doc(macAddress)
         .set({
@@ -40,6 +47,12 @@ export function Control({
           status,
           message,
           lastAction: new Date().toLocaleString().replace(/\//g, '.'),
+        })
+        .then(() => {
+          toast.success('The computer was turned off');
+        })
+        .catch(() => {
+          toast.error('Error, the computer was not turned off');
         });
     }
   }

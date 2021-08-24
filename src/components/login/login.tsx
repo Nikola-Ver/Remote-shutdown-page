@@ -7,9 +7,11 @@ import firebase from 'firebase';
 export function Login({
   setIsActiveLogin,
   setFirestore,
+  toast,
 }: {
   setIsActiveLogin: Dispatch<SetStateAction<boolean>>;
   setFirestore: any;
+  toast: any;
 }) {
   const background = useRef(null);
   let [apiKey, setApiKey] = useState('');
@@ -144,6 +146,7 @@ export function Login({
                         process.env.REACT_APP_MESSAGING_SENDER_ID,
                       appId: process.env.REACT_APP_APP_ID,
                     });
+                    toast.success('Firestore connected');
 
                     setFirestore(firebase.firestore());
                     setIsActiveLogin(false);
@@ -161,6 +164,7 @@ export function Login({
                       messagingSenderId,
                       appId,
                     });
+                    toast.success('Firestore connected');
 
                     setFirestore(firebase.firestore());
                     localStorage.setItem(

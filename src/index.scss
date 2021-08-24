@@ -2,3 +2,15 @@ body {
   margin: 0;
   background: var(--background);
 }
+
+.Toastify__toast {
+  background: var(--background-popup) !important;
+}
+
+.Toastify__progress-bar--success {
+  background: var(--active) !important;
+}
+
+.Toastify__progress-bar--error {
+  background: var(--error) !important;
+}

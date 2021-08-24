@@ -1,4 +1,3 @@
-import './styles/variables.scss';
 import './img/sad-smile.svg';
 import classes from './App.module.scss';
 import { createTheme } from '@material-ui/core/styles';
@@ -11,8 +10,12 @@ import { Control } from './components/control';
 import { useEffect, useState } from 'react';
 import { Firestore } from './firestore';
 import firebase from 'firebase';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+const PING_TIME = 6 * 60 * 1000;
 const firebaseKeys = JSON.parse(localStorage.getItem('firestore') || '{}');
+
 if (firebaseKeys.apiKey) {
   firebase.initializeApp({
     apiKey: firebaseKeys.apiKey,
@@ -56,6 +59,7 @@ const theme = createTheme({
 });
 
 let unsubscribe: any = null;
+let idInterval: any = 0;
 
 function App() {
   let [isActiveLogin, setIsActiveLogin] = useState(false);
@@ -63,21 +67,47 @@ function App() {
   let [computers, setComputers]: any = useState([]);
   let [firestore, setFirestore] = useState(firebase.firestore());
 
-  document.onkeydown = (e) => {
-    if (e.key === 'Escape') {
-      setIsActiveLogin(false);
-      setMacAddress('');
-    }
-  };
+  useEffect(() => {
+    document.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        setIsActiveLogin(false);
+        setMacAddress('');
+      }
+    };
+  }, []);
 
   useEffect(() => {
-    if (unsubscribe) unsubscribe();
+    function getComputers(
+      doc: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
+    ) {
+      return doc.docs
+        .map((e) => {
+          let {
+            lastAction,
+            pingTime,
+            localIp,
+            message,
+            name,
+            userName,
+            status,
+          } = e.data();
 
-    unsubscribe = firestore.collection('computers').onSnapshot((doc) => {
-      setComputers(
-        doc.docs.map((e) => {
-          const { lastAction, localIp, message, name, userName, status } =
-            e.data();
+          if (status) {
+            const lastPingTime = new Date(
+              pingTime
+                .split(', ')
+                .map((e: string, i: number) =>
+                  i ? e : e.split('.').reverse().join('.')
+                )
+                .join(', ')
+            ).valueOf();
+
+            if (lastPingTime + PING_TIME < new Date().valueOf()) {
+              lastAction = pingTime;
+              status = false;
+            }
+          }
+
           return {
             macAddress: e.id,
             lastAction,
@@ -88,8 +118,20 @@ function App() {
             status,
           };
         })
-      );
+        .sort((a, b) => (a.status > b.status ? -1 : 0));
+    }
+
+    if (unsubscribe) unsubscribe();
+    if (idInterval) clearInterval(idInterval);
+
+    unsubscribe = firestore.collection('computers').onSnapshot((doc) => {
+      setComputers(getComputers(doc));
     });
+
+    idInterval = setInterval(async () => {
+      const doc = await firestore.collection('computers').get();
+      setComputers(getComputers(doc));
+    }, PING_TIME);
   }, [firestore]);
 
   return (
@@ -109,11 +151,27 @@ function App() {
           <Login
             setFirestore={setFirestore}
             setIsActiveLogin={setIsActiveLogin}
+            toast={toast}
           />
         )}
         {macAddress && (
-          <Control macAddress={macAddress} setMacAddress={setMacAddress} />
+          <Control
+            macAddress={macAddress}
+            setMacAddress={setMacAddress}
+            toast={toast}
+          />
         )}
+        <ToastContainer
+          position="top-center"
+          autoClose={2500}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          limit={3}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <div className={classes.box}>
           {computers?.map((e: any, index: number) => (
             <Computer
@@ -130,7 +188,9 @@ function App() {
           {computers && !computers.length && (
             <div className={classes['empty-box']}>
               <div className={classes['sad-smile']}></div>
-              <Typography className={classes.header} variant="h1">No computers connected yet</Typography>
+              <Typography className={classes.header} variant="h1">
+                No computers connected yet
+              </Typography>
             </div>
           )}
         </div>
