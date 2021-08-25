@@ -1,7 +1,13 @@
 import classes from './login.module.scss';
 import { Close as CloseIcon, Settings as SetIcon } from '@material-ui/icons';
 import { Button, TextField } from '@material-ui/core';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useRef,
+  useState,
+  KeyboardEvent,
+} from 'react';
 import firebase from 'firebase';
 
 export function Login({
@@ -21,6 +27,87 @@ export function Login({
   let [messagingSenderId, setMessagingSenderId] = useState('');
   let [appId, setAppId] = useState('');
 
+  function setNewFirestore() {
+    if (
+      !apiKey.length &&
+      !authDomain.length &&
+      !projectId.length &&
+      !storageBucket.length &&
+      !messagingSenderId.length &&
+      !appId.length
+    ) {
+      firebase
+        .app()
+        .delete()
+        .then(() => {
+          firebase.initializeApp({
+            apiKey: process.env.REACT_APP_API_KEY,
+            authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+            projectId: process.env.REACT_APP_PROJECT_ID,
+            storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+            messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+            appId: process.env.REACT_APP_APP_ID,
+          });
+          toast.success('Firestore connected');
+
+          setFirestore(firebase.firestore());
+          setIsActiveLogin(false);
+        });
+    } else {
+      firebase
+        .app()
+        .delete()
+        .then(() => {
+          firebase.initializeApp({
+            apiKey,
+            authDomain,
+            projectId,
+            storageBucket,
+            messagingSenderId,
+            appId,
+          });
+          toast.success('Firestore connected');
+
+          setFirestore(firebase.firestore());
+          localStorage.setItem(
+            'firestore',
+            JSON.stringify({
+              apiKey,
+              authDomain,
+              projectId,
+              storageBucket,
+              messagingSenderId,
+              appId,
+            })
+          );
+          setIsActiveLogin(false);
+        });
+    }
+  }
+
+  function insertKeys(keys: string) {
+    const reg =
+      /((?<=apiKey: ")[^"]*)|((?<=authDomain: ")[^"]*)|((?<=projectId: ")[^"]*)|((?<=storageBucket: ")[^"]*)|((?<=messagingSenderId: ")[^"]*)|((?<=appId: ")[^"]*)/g;
+    const res = keys.match(reg);
+    if (res?.length === 6) {
+      setApiKey(res[0]);
+      setAuthDomain(res[1]);
+      setProjectId(res[2]);
+      setStorageBucket(res[3]);
+      setMessagingSenderId(res[4]);
+      setAppId(res[5]);
+    }
+  }
+
+  function processKeyUp(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Enter') {
+      setNewFirestore();
+    } else if (event.ctrlKey && event.key === 'v') {
+      /// @ts-ignore
+      insertKeys(event.target.value);
+    }
+  }
+
   return (
     <div
       className={classes.background}
@@ -38,6 +125,8 @@ export function Login({
           className={classes.input}
           label="Api key"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={apiKey}
           onChange={(e) => {
             setApiKey(e.target.value);
           }}
@@ -50,6 +139,8 @@ export function Login({
           className={classes.input}
           label="Auth domain"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={authDomain}
           onChange={(e) => {
             setAuthDomain(e.target.value);
           }}
@@ -62,6 +153,8 @@ export function Login({
           className={classes.input}
           label="Project id"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={projectId}
           onChange={(e) => {
             setProjectId(e.target.value);
           }}
@@ -74,6 +167,8 @@ export function Login({
           className={classes.input}
           label="Storage bucket"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={storageBucket}
           onChange={(e) => {
             setStorageBucket(e.target.value);
           }}
@@ -86,6 +181,8 @@ export function Login({
           className={classes.input}
           label="Messaging sender id"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={messagingSenderId}
           onChange={(e) => {
             setMessagingSenderId(e.target.value);
           }}
@@ -98,6 +195,8 @@ export function Login({
           className={classes.input}
           label="App id"
           variant="outlined"
+          onKeyUp={processKeyUp}
+          value={appId}
           onChange={(e) => {
             setAppId(e.target.value);
           }}
@@ -125,62 +224,7 @@ export function Login({
             variant="outlined"
             color="primary"
             onClick={() => {
-              if (
-                !apiKey.length &&
-                !authDomain.length &&
-                !projectId.length &&
-                !storageBucket.length &&
-                !messagingSenderId.length &&
-                !appId.length
-              ) {
-                firebase
-                  .app()
-                  .delete()
-                  .then(() => {
-                    firebase.initializeApp({
-                      apiKey: process.env.REACT_APP_API_KEY,
-                      authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-                      projectId: process.env.REACT_APP_PROJECT_ID,
-                      storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-                      messagingSenderId:
-                        process.env.REACT_APP_MESSAGING_SENDER_ID,
-                      appId: process.env.REACT_APP_APP_ID,
-                    });
-                    toast.success('Firestore connected');
-
-                    setFirestore(firebase.firestore());
-                    setIsActiveLogin(false);
-                  });
-              } else {
-                firebase
-                  .app()
-                  .delete()
-                  .then(() => {
-                    firebase.initializeApp({
-                      apiKey,
-                      authDomain,
-                      projectId,
-                      storageBucket,
-                      messagingSenderId,
-                      appId,
-                    });
-                    toast.success('Firestore connected');
-
-                    setFirestore(firebase.firestore());
-                    localStorage.setItem(
-                      'firestore',
-                      JSON.stringify({
-                        apiKey,
-                        authDomain,
-                        projectId,
-                        storageBucket,
-                        messagingSenderId,
-                        appId,
-                      })
-                    );
-                    setIsActiveLogin(false);
-                  });
-              }
+              setNewFirestore();
             }}
           >
             Set <SetIcon className={classes['set-icon']} color="primary" />
