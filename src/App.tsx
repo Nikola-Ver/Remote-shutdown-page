@@ -94,12 +94,14 @@ function App() {
 
           if (status) {
             const lastPingTime = new Date(
-              pingTime
-                .split(', ')
-                .map((e: string, i: number) =>
-                  i ? e : e.split('.').reverse().join('.')
-                )
-                .join(', ')
+              Date.parse(
+                pingTime
+                  .split(', ')
+                  .map((e: string, i: number) =>
+                    i ? e : e.split('.').reverse().join('-')
+                  )
+                  .join('T')
+              )
             ).valueOf();
 
             if (lastPingTime + PING_TIME < new Date().valueOf()) {
