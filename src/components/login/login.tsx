@@ -85,7 +85,7 @@ export function Login({
     }
   }
 
-  function insertKeys(keys: string) {
+  function insertKeys(keys: string): boolean {
     const reg =
       /((?<=apiKey: ")[^"]*)|((?<=authDomain: ")[^"]*)|((?<=projectId: ")[^"]*)|((?<=storageBucket: ")[^"]*)|((?<=messagingSenderId: ")[^"]*)|((?<=appId: ")[^"]*)/g;
     const res = keys.match(reg);
@@ -96,15 +96,14 @@ export function Login({
       setStorageBucket(res[3]);
       setMessagingSenderId(res[4]);
       setAppId(res[5]);
+      return true;
     }
+    return false;
   }
 
   function processKeyUp(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Enter') {
       setNewFirestore();
-    } else if (event.ctrlKey && event.key === 'v') {
-      /// @ts-ignore
-      insertKeys(event.target.value);
     }
   }
 
@@ -125,6 +124,11 @@ export function Login({
           className={classes.input}
           label="Api key"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setApiKey(text);
+          }}
           onKeyUp={processKeyUp}
           value={apiKey}
           onChange={(e) => {
@@ -139,6 +143,11 @@ export function Login({
           className={classes.input}
           label="Auth domain"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setAuthDomain(text);
+          }}
           onKeyUp={processKeyUp}
           value={authDomain}
           onChange={(e) => {
@@ -153,6 +162,11 @@ export function Login({
           className={classes.input}
           label="Project id"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setProjectId(text);
+          }}
           onKeyUp={processKeyUp}
           value={projectId}
           onChange={(e) => {
@@ -167,6 +181,11 @@ export function Login({
           className={classes.input}
           label="Storage bucket"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setStorageBucket(text);
+          }}
           onKeyUp={processKeyUp}
           value={storageBucket}
           onChange={(e) => {
@@ -181,6 +200,11 @@ export function Login({
           className={classes.input}
           label="Messaging sender id"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setMessagingSenderId(text);
+          }}
           onKeyUp={processKeyUp}
           value={messagingSenderId}
           onChange={(e) => {
@@ -195,6 +219,11 @@ export function Login({
           className={classes.input}
           label="App id"
           variant="outlined"
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text');
+            if (!insertKeys(text)) setAppId(text);
+          }}
           onKeyUp={processKeyUp}
           value={appId}
           onChange={(e) => {
